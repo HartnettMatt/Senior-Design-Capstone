@@ -3,16 +3,17 @@
 rw
 echo "Compiling code..."
 gcc ./npll.c -o "./npll"
-gcc ./gpsdo.c -o "./gpsdo"
+gcc ./gpsdo.c -o "./gps"
 gcc ./gpio.c -o "./gpio"
+gcc ./calibrate.c -o "./calibrate"
 echo "Code compiled"
 echo "Programming the NPLL"
 ./npll
-echo "Communicating with the GPS"
-./gps
+# echo "Communicating with the GPS"
+# ./gps
 echo "Programming the FPGA"
-killall nginx
-cat ./ddrdump_TRIG.bit > /dev/xdevcfg
-nginx -p ../www/
-"Preparing to trigger"
+./calibrate
+echo "Preparing to trigger"
 ./gpio
+echo "Reading the time tag:"
+./timeoutput

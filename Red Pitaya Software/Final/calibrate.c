@@ -104,67 +104,38 @@ static int pin_write(int pin, int value) {
 }
 
 int main(int argc, char *argv[]) {
-	printf("Waiting for trigger...\n");
-	unsigned short second = 0b0;
-	unsigned long cycle = 0b0;
-	char command[65];
-	char awsCom1[200];
-	char awsCom2[200];
-	char gpsCom1[20];
-	char gpsCom2[6];
-	strcpy(command, "./rp_remote_acquire -m file -k 24413 -c 0 -d 1 -f /vol/out1.dat");
-	strcpy(awsCom1, "scp -i /KeyOnKites.pem /opt/redpitaya/tmp/timetag.csv ubuntu@ec2-3-23-168-123.us-east-2.compute.amazonaws.com:~");
-	strcpy(awsCom2, "scp -i /KeyOnKites.pem /opt/redpitaya/tmp/gpsdata.csv ubuntu@ec2-3-23-168-123.us-east-2.compute.amazonaws.com:~");
-	strcpy(gpsCom1, "gcc gpsdo.c -o gps");
-	strcpy(gpsCom2, "./gps");
-	while(1){
-		pin_export(960);
-		pin_direction(960, IN);
-		if(pin_read(960)==TRIGG){
-			pin_unexport(960);
-			printf("Trigger High\n");
-			system(command);
+	//setup calibration
+	char cmd_netstop[20];
+	char cmd_netstart[20];
+	char cmd_prgrm[40];
+	char cmd_gps[20];
+	strcpy(cmd_netstop, "killall nginx");
+	strcpy(cmd_prgrm, "cat ./ddrdump_TRIG.bit > /dev/xdevcfg");
+	strcpy(cmd_netstart, "nginx -p ../www/");
+  strcpy(cmd_gps, "./gps");
 
-			// Read the second counter
-			for (int i = 999; i >= 988; i--){
-				pin_export(i);
-				pin_direction(i, IN);
-				second = second | pin_read(i);
-				if(i != 988){
-					second = second<<1;
-				}
-				pin_unexport(i);
-			}
 
-			// Read the cycle counter
-			for(int i = 987; i >= 962; i--){
-				pin_export(i);
-				pin_direction(i, IN);
-				cycle = cycle | pin_read(i);
-				if(i != 962){
-					cycle = cycle<<1;
-				}
-				pin_unexport(i);
-			}
-			//system(gpsCom1);
-			//system(gpsCom2);
-			// Open the time tag data file and populate it
-			FILE *fpt;
-			fpt = fopen("timetag.csv", "w+");
-			fprintf(fpt, "%u, %lu", second, cycle);
-			fclose(fpt);
+	printf("Stopping nsec counter...\n");
+	pin_export(961);
+	pin_direction(961, OUT);
+	pin_write(961,HIGH);//reset high -> stopped counter
 
-			printf("timetag.csv written to!\n");
-			printf("Uploading GPS and time tag data");
-			system(awsCom1);
-			system(awsCom2);
-			printf("Check server.\n");
-			second = 0b0;
-			cycle = 0b0;
-			break;
-		} else {
-			pin_unexport(960);
-		}
-	}
+
+	printf("Programming FPGA...\n");
+	system(cmd_netstop);
+	system(cmd_prgrm);
+	system(cmd_netstart);
+
+	//maybe add delay to ensure FPGA programmed?
+	printf("Calibrating GPS timestamp...\n");
+	system(cmd_gps);
+
+	printf("Starting nsec counter...\n");
+	pin_write(961,LOW); //start timer
+	pin_unexport(961);
+
+	printf("nsec counter Calibrated!\n\n\n");
+
+
 	return 0;
 }

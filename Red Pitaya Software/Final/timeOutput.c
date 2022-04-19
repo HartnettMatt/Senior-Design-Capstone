@@ -59,12 +59,12 @@ int main(int argc, char *argv[])
             while (value) {
                 // Column 1
                 if (column == 0) {
-                    ns = atoi(value)*8;
+                    sec = atoi(value);
                 }
 
                 // Column 2
                 if (column == 1) {
-                    sec = atoi(value);
+                    ns = atoi(value);
                 }
 
 
@@ -76,9 +76,9 @@ int main(int argc, char *argv[])
         }
     fclose(fpAlt);
     sec = sec + seconds;
-    if(ns / 1000000 >= 1){
-        sec += (int)(ns/1000000);
-        ns = ns % 1000000;
+    if(ns / 1000000000 >= 1){
+        sec += (int)(ns/1000000000);
+        ns = ns % 1000000000;
     }
 
     if(sec/60 >= 1){
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
         min = min % 60;
     }
     if(hours >= 24){
-        hours = hours - 24;
+        hours = hours % 24;
     }
     printf("Hours: %d\n", hours);
     printf("Minutes: %d\n", min);

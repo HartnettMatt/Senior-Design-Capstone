@@ -3,7 +3,7 @@
 rw
 echo "Compiling code..."
 gcc ./npll.c -o "./npll"
-gcc ./gpsdo.c -o "./gpsdo"
+gcc ./gpsdo.c -o "./gps"
 gcc ./gpio.c -o "./gpio"
 gcc ./timeOutput.c -o "timeoutput"
 echo "Code compiled"
