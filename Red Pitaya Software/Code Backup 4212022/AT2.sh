@@ -6,7 +6,6 @@ gcc ./npll.c -o "./npll"
 gcc ./gpsdo.c -o "./gps"
 gcc ./gpio.c -o "./gpio"
 gcc ./timeOutput.c -o "timeoutput"
-gcc ./calibrate.c -o "calibrate"
 echo "Code compiled"
 
 echo "Press any key to program the NPLL"

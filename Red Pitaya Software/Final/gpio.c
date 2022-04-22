@@ -125,24 +125,24 @@ int main(int argc, char *argv[]) {
 			printf("Trigger High\n");
 			system(command);
 
-			// Read the second counter
-			for (int i = 999; i >= 988; i--){
+			// Read the cycle counter
+			for (int i = 999; i >= 973; i--){
 				pin_export(i);
 				pin_direction(i, IN);
-				second = second | pin_read(i);
-				if(i != 988){
-					second = second<<1;
+				cycle =  cycle | pin_read(i);
+				if(i != 973){
+					cycle = cycle<<1;
 				}
 				pin_unexport(i);
 			}
 
-			// Read the cycle counter
-			for(int i = 987; i >= 962; i--){
+			// Read the second counter
+			for(int i = 972; i >= 962; i--){
 				pin_export(i);
 				pin_direction(i, IN);
-				cycle = cycle | pin_read(i);
+				second = second | pin_read(i);
 				if(i != 962){
-					cycle = cycle<<1;
+					second = second<<1;
 				}
 				pin_unexport(i);
 			}

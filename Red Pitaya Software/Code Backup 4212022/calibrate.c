@@ -7,14 +7,11 @@
 #include <stdio.h>
 #include <string.h>
 
-
 #define IN  0
 #define OUT 1
 
 #define LOW  0
 #define HIGH 1
-
-#define DELAY 125000000
 
 #define PIN 976
 #define POUT 968
@@ -130,8 +127,6 @@ int main(int argc, char *argv[]) {
 	system(cmd_netstart);
 
 	//maybe add delay to ensure FPGA programmed?
-	for(int i = 0; i < DELAY; i++){
-	}
 	printf("Calibrating GPS timestamp...\n");
 	system(cmd_gps);
 
