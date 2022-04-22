@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
 	char awsCom2[200];
 	char gpsCom1[20];
 	char gpsCom2[6];
-	strcpy(command, "./rp_remote_acquire -m file -k 244131 -c 0 -d 1 -f /vol/out1.dat");
+	strcpy(command, "./rp_remote_acquire -m file -k 24413 -c 0 -d 1 -f /vol/out1.dat");
 	strcpy(awsCom1, "scp -i /KeyOnKites.pem /opt/redpitaya/tmp/timetag.csv ubuntu@ec2-3-23-168-123.us-east-2.compute.amazonaws.com:~");
 	strcpy(awsCom2, "scp -i /KeyOnKites.pem /opt/redpitaya/tmp/gpsdata.csv ubuntu@ec2-3-23-168-123.us-east-2.compute.amazonaws.com:~");
 	strcpy(gpsCom1, "gcc gpsdo.c -o gps");
@@ -123,11 +123,7 @@ int main(int argc, char *argv[]) {
 		if(pin_read(960)==TRIGG){
 			pin_unexport(960);
 			printf("Trigger High\n");
-			//pin_export(961);
-			//pin_direction(961, OUT);
-			//pin_write(961, HIGH);
-			//system(command);
-			
+			system(command);
 
 			// Read the cycle counter
 			for (int i = 999; i >= 973; i--){
@@ -150,7 +146,6 @@ int main(int argc, char *argv[]) {
 				}
 				pin_unexport(i);
 			}
-			system(command);
 			//system(gpsCom1);
 			//system(gpsCom2);
 			// Open the time tag data file and populate it
